@@ -157,6 +157,38 @@ describe("Models", () => {
 
             await expect(news.destroy()).resolves.toBeTruthy();
         });
+
+        test("Add Category", async () => {
+            const news = await News.create({
+                userId: user.id,
+                title: "News 01",
+                subject: "News Subject 01",
+                content: "News Content 01",
+                categories: [
+                    {
+                        name: "Cat 01"
+                    }
+                ]
+            }, {
+                include: [Category]
+            });
+
+            expect(news.categories.length).toBe(1);
+
+            const cat = await Category.create({ name: "Cat 2 "});
+            await news.addCategory(cat);
+
+            const news2 = await News.findOne({
+                where: {
+                    id: news.id
+                },
+                include: [User, Category]
+            });
+
+            console.log(news2);
+
+            expect(news2.categories.length).toBe(2);
+        });
     });
 
     describe("Category", () => {

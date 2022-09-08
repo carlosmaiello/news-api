@@ -91,5 +91,7 @@ User.hasMany(News, {
 });
 News.belongsTo(User);
 
+Category.belongsToMany(News, {through: "news_categories"});
+News.belongsToMany(Category, { through: "news_categories" });
 
 module.exports = { database, News, Category, User }

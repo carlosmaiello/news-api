@@ -11,7 +11,7 @@ app.use(express.json());
 app.use("/categories", categories);
 
 app.use((err, req, res, next) => {
-    console.error(err.stack);
+    // console.error(err.stack);
     res.status(500).send({
         error: true,
         content: err

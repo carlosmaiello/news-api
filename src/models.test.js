@@ -6,7 +6,7 @@ describe("Models", () => {
     var user;
 
     beforeAll(async () => {
-        await database.sync({logging: false}); 
+        await database.sync(); 
         user = await User.create({
             name: "Zezinho",
             email: "ze@uol.com.br",

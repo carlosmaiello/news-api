@@ -6,7 +6,7 @@ describe("Models", () => {
     var user;
 
     beforeAll(async () => {
-        await database.sync(); 
+        await database.sync({logging: false}); 
         user = await User.create({
             name: "Zezinho",
             email: "ze@uol.com.br",
@@ -185,8 +185,6 @@ describe("Models", () => {
                 include: [User, Category]
             });
 
-            console.log(news2);
-
             expect(news2.categories.length).toBe(2);
         });
     });
@@ -211,7 +209,7 @@ describe("Models", () => {
 
             const categories = await Category.findAll();
 
-            expect(categories.length).toBe(4);
+            expect(categories.length).toBe(6);
         })
 
         test("Insert", async () => {

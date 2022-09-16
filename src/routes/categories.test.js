@@ -13,7 +13,19 @@ describe("Routes", () => {
                 .get("/categories")
                 .expect(200);
         })
-        test("POST /", () => { })
+        test("POST /", async () => {
+            const response = await request(app)
+                .post('/categories')
+                .send({
+                    name: "Categoria Teste"
+                })
+                .expect(201);
+
+            await request(app)
+                .post('/categories')
+                .send({})
+                .expect(500);                
+        })
         test("GET /:id", async () => {
             const cat = await Category.create({
                 name: "Categoria teste"
@@ -27,8 +39,26 @@ describe("Routes", () => {
                 .get("/categories/1000")
                 .expect(500);
         })
-        test("POST /:id", () => { })
-        test("DELETE /:id", () => { })
+        test("POST /:id", async () => {
+            const cat = await Category.create({
+                name: "Categoria teste 2"
+            });
+
+            const response = await request(app)
+                .post(`/categories/${cat.id}`)
+                .send({
+                    name: "Outra categoria"
+                })
+                .expect(200);
+         })
+        test("DELETE /:id", async () => { 
+            const cat = await Category.create({
+                name: "Categoria teste 3"
+            });
+            const response = await request(app)
+                .delete(`/categories/${cat.id}`)
+                .expect(204);
+        })
 
     });
 

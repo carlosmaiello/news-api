@@ -48,7 +48,15 @@ const one = async (req, res, next) => {
  * @param {*} res 
  * @param {*} next 
  */
-const insert = (req, res, next) => { }
+const insert = async (req, res, next) => { 
+    try {
+        const category = await Category.create(req.body);
+        res.status(201).send(category);
+    }
+    catch (err) {
+        next(err);
+    }
+}
 
 /**
  * Alterar uma categoria
@@ -56,7 +64,27 @@ const insert = (req, res, next) => { }
  * @param {*} res 
  * @param {*} next 
  */
-const update = (req, res, next) => { }
+const update = async (req, res, next) => { 
+    try {
+        const category = await Category.findOne({
+            where: {
+                id: req.params.id
+            }
+        });
+
+        if (!category) {
+            throw new Error("Categoria não existe");
+        }
+
+        category.set(req.body);
+
+        res.send(await category.save());
+    }
+    catch (err) {
+        next(err);
+    }
+
+}
 
 /**
  * Remove uma categoria
@@ -64,7 +92,25 @@ const update = (req, res, next) => { }
  * @param {*} res 
  * @param {*} next 
  */
-const remove = (req, res, next) => { }
+const remove = async (req, res, next) => { 
+    try {
+        const category = await Category.findOne({
+            where: {
+                id: req.params.id
+            }
+        });
+
+        if (!category) {
+            throw new Error("Categoria não existe");
+        }
+
+        await category.destroy();
+        res.status(204);
+    }
+    catch (err) {
+        next(err);
+    }
+}
 
 
 module.exports = { all, one, insert, update, remove };

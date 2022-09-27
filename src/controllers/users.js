@@ -50,7 +50,12 @@ const one = async (req, res, next) => {
  */
 const insert = async (req, res, next) => { 
     try {
-        const user = await User.create(req.body);
+        const data = req.body;
+
+        if (data.password)
+            data.password = await bcrypt.hash(data.password, 10);
+
+        const user = await User.create(data);
         res.status(201).send(user);
     }
     catch (err) {
@@ -76,7 +81,12 @@ const update = async (req, res, next) => {
             throw new Error("Categoria não existe");
         }
 
-        user.set(req.body);
+        const data = req.body;
+
+        if (data.password)
+            data.password = await bcrypt.hash(data.password, 10);
+
+        user.set(data);
 
         res.send(await user.save());
     }

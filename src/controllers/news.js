@@ -50,7 +50,7 @@ const one = async (req, res, next) => {
  */
 const insert = async (req, res, next) => { 
     try {
-        const news = await News.create(req.body);
+        const news = await News.create({...req.body, userId: req.userId });
         res.status(201).send(news);
     }
     catch (err) {

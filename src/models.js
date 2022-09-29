@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
-const DATABASE = process.env.NODE_ENV == "test" ? "sqlite::memory:" : "sqlite:./database.sqlite";
+const DATABASE = process.env.NODE_ENV == "test" ? "sqlite::memory:" : (process.env.NODE_ENV == "test" ? "sqlite:./database.sqlite" : process.env.DATABASE_URL);
 // const DATABASE = process.env.NODE_ENV == "test" ? "sqlite::memory:" : "postgres:news:news@localhost:5432/news";
 const database = new Sequelize(DATABASE, {logging: false});
 

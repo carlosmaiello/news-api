@@ -126,7 +126,7 @@ const remove = async (req, res, next) => {
         }
 
         await news.destroy();
-        res.status(204);
+        res.status(204).send();
     }
     catch (err) {
         next(err);

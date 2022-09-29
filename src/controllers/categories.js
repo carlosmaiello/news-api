@@ -105,7 +105,7 @@ const remove = async (req, res, next) => {
         }
 
         await category.destroy();
-        res.status(204);
+        res.status(204).send();
     }
     catch (err) {
         next(err);

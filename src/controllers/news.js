@@ -53,10 +53,15 @@ const one = async (req, res, next) => {
  */
 const insert = async (req, res, next) => { 
     try {
+        console.log({ ...req.body, userId: req.userId });
         const news = await News.create({...req.body, userId: req.userId });
         if (req.body.categories) {
-            req.body.categories.forEach((category) => news.categories.add(category.id));
+            req.body.categories.forEach(async (category) => await news.addCategory(category.id));
         }
+
+        await news.reload({
+            include: Category
+        });
         res.status(201).send(news);
     }
     catch (err) {
@@ -87,10 +92,12 @@ const update = async (req, res, next) => {
         await news.save();
 
         if (req.body.categories) {
-            req.body.categories.forEach((category) => news.categories.add(category.id));
+            req.body.categories.forEach(async (category) => await news.addCategory(category.id));
         }
 
-        await news.reload();
+        await news.reload({
+            include: Category
+        });
 
         res.send(news);
     }

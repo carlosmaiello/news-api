@@ -1,4 +1,4 @@
-const { News } = require("../models");
+const { News, Category } = require("../models");
 
 /**
  * Lista todas as notícias
@@ -8,7 +8,9 @@ const { News } = require("../models");
  */
 const all = async (req, res, next) => {
     try {
-        res.send(await News.findAll());
+        res.send(await News.findAll({
+            include: Category
+        }));
     } catch (err) {
         next(err);
     }
@@ -26,7 +28,8 @@ const one = async (req, res, next) => {
         const news = await News.findOne({
             where: {
                 id: id
-            }
+            },
+            include: Category
         });
 
         if (!news)
@@ -51,6 +54,9 @@ const one = async (req, res, next) => {
 const insert = async (req, res, next) => { 
     try {
         const news = await News.create({...req.body, userId: req.userId });
+        if (req.body.categories) {
+            req.body.categories.forEach((category) => news.categories.add(category.id));
+        }
         res.status(201).send(news);
     }
     catch (err) {
@@ -78,7 +84,15 @@ const update = async (req, res, next) => {
 
         news.set(req.body);
 
-        res.send(await news.save());
+        await news.save();
+
+        if (req.body.categories) {
+            req.body.categories.forEach((category) => news.categories.add(category.id));
+        }
+
+        await news.reload();
+
+        res.send(news);
     }
     catch (err) {
         next(err);

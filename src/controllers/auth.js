@@ -3,9 +3,10 @@ const jwt = require('jsonwebtoken');
 
 const { User } = require('../models');
 
-const me = async (req, res, next) => { 
+const me = async (req, res, next) => {
     try {
         const user = await User.findOne({
+            attributes: ['id', 'name', 'email'],
             where: {
                 id: req.userId
             }
@@ -20,19 +21,22 @@ const me = async (req, res, next) => {
         next(error);
     }
 }
-const login = async (req, res, next) => { 
+const login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
 
         if (!email)
             throw new Error("Usuário ou senha inválidos!");
 
-        const user = await User.findOne({ where: { email } });
+        const user = await User.findOne({
+            attributes: ['id', 'name', 'email'],
+            where: { email }
+        });
 
         if (!user)
             throw new Error("Usuário ou senha inválidos!");
 
-        if (!await bcrypt.compare(password, user.password)) 
+        if (!await bcrypt.compare(password, user.password))
             throw new Error("Usuário ou senha inválidos!");
 
 
@@ -49,14 +53,14 @@ const login = async (req, res, next) => {
 
 }
 
-const register = async (req, res, next) => { 
+const register = async (req, res, next) => {
     try {
         const data = req.body;
-       
+
         if (data.password)
             data.password = await bcrypt.hash(data.password, 10);
 
-    
+
 
         const user = await User.create(data);
         console.log(user);
@@ -67,6 +71,6 @@ const register = async (req, res, next) => {
         console.log(error);
         next(error);
     }
- }
+}
 
- module.exports = { me, login, register }
+module.exports = { me, login, register }

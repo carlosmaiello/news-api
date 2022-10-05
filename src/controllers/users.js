@@ -8,7 +8,9 @@ const { User } = require("../models");
  */
 const all = async (req, res, next) => {
     try {
-        res.send(await User.findAll());
+        res.send(await User.findAll({
+            attributes: ['id', 'name', 'email'],
+        }));
     } catch (err) {
         next(err);
     }
@@ -24,6 +26,7 @@ const one = async (req, res, next) => {
     try {
         const id = req.params.id;
         const user = await User.findOne({
+            attributes: ['id', 'name', 'email'],
             where: {
                 id: id
             }
@@ -48,7 +51,7 @@ const one = async (req, res, next) => {
  * @param {*} res 
  * @param {*} next 
  */
-const insert = async (req, res, next) => { 
+const insert = async (req, res, next) => {
     try {
         const data = req.body;
 
@@ -69,7 +72,7 @@ const insert = async (req, res, next) => {
  * @param {*} res 
  * @param {*} next 
  */
-const update = async (req, res, next) => { 
+const update = async (req, res, next) => {
     try {
         const user = await User.findOne({
             where: {
@@ -102,7 +105,7 @@ const update = async (req, res, next) => {
  * @param {*} res 
  * @param {*} next 
  */
-const remove = async (req, res, next) => { 
+const remove = async (req, res, next) => {
     try {
         const user = await User.findOne({
             where: {

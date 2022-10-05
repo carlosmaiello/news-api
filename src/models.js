@@ -34,6 +34,10 @@ const News = database.define('news', {
     image: {
         type: DataTypes.STRING
     },
+    visibility: {
+        type: DataTypes.STRING(20),
+        defaultValue: "public"
+    },
     published_at: {
         type: DataTypes.DATE
     }

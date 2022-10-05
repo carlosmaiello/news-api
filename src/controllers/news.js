@@ -1,4 +1,5 @@
 const { News, Category } = require("../models");
+const { Op } = require("sequelize");
 
 /**
  * Lista todas as notícias
@@ -8,8 +9,21 @@ const { News, Category } = require("../models");
  */
 const all = async (req, res, next) => {
     try {
+        const where = [];
+
+        if (!req.user)
+            where.push({ visibility: "public" });
+        else
+            where.push({
+                [Op.or]: [
+                    { visibility: "public" },
+                    { visibility: "private", userId: req.userId }
+                ]
+            });
+
         res.send(await News.findAll({
-            include: Category
+            include: Category,
+            where
         }));
     } catch (err) {
         next(err);
@@ -24,11 +38,23 @@ const all = async (req, res, next) => {
  */
 const one = async (req, res, next) => {
     try {
-        const id = req.params.id;
+        const { id } = req.params;
+
+        const where = [];
+
+        if (!req.user)
+            where.push({ id, visibility: "public" });
+        else
+            where.push({
+                id,
+                [Op.or]: [
+                    { visibility: "public" },
+                    { visibility: "private", userId: req.userId }
+                ]
+            });
+
         const news = await News.findOne({
-            where: {
-                id: id
-            },
+            where,
             include: Category
         });
 
@@ -51,10 +77,10 @@ const one = async (req, res, next) => {
  * @param {*} res 
  * @param {*} next 
  */
-const insert = async (req, res, next) => { 
+const insert = async (req, res, next) => {
     try {
         console.log({ ...req.body, userId: req.userId });
-        const news = await News.create({...req.body, userId: req.userId });
+        const news = await News.create({ ...req.body, userId: req.userId });
         if (req.body.categories) {
             req.body.categories.forEach(async (category) => await news.addCategory(category.id));
         }
@@ -75,7 +101,7 @@ const insert = async (req, res, next) => {
  * @param {*} res 
  * @param {*} next 
  */
-const update = async (req, res, next) => { 
+const update = async (req, res, next) => {
     try {
         const news = await News.findOne({
             where: {
@@ -113,7 +139,7 @@ const update = async (req, res, next) => {
  * @param {*} res 
  * @param {*} next 
  */
-const remove = async (req, res, next) => { 
+const remove = async (req, res, next) => {
     try {
         const news = await News.findOne({
             where: {

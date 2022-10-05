@@ -5,7 +5,7 @@ services:
 
   db:
     image: postgres
-    restart: always
+    # restart: always
     environment:
       POSTGRES_PASSWORD: news
       POSTGRES_USER: news
@@ -15,6 +15,6 @@ services:
 
   adminer:
     image: adminer
-    restart: always
+    # restart: always
     ports:
       - 8080:8080
